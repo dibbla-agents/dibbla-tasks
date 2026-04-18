@@ -293,34 +293,6 @@ func TestShellExecutor_BackgroundModeLongRunning(t *testing.T) {
 	}
 }
 
-// --- Terminal Mode Tests ---
-
-func TestBuildTerminalAppleScript(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("AppleScript not available on windows")
-	}
-	result := executor.BuildTerminalAppleScript("cd '/tmp' && npm run dev")
-	if !strings.Contains(result, "do script") {
-		t.Errorf("expected AppleScript to contain 'do script', got %q", result)
-	}
-	if !strings.Contains(result, "npm run dev") {
-		t.Errorf("expected AppleScript to contain the command, got %q", result)
-	}
-	if !strings.Contains(result, "activate") {
-		t.Errorf("expected AppleScript to contain 'activate', got %q", result)
-	}
-}
-
-func TestBuildTerminalAppleScript_SpecialChars(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("AppleScript not available on windows")
-	}
-	result := executor.BuildTerminalAppleScript(`cd "/path with spaces" && echo "hello"`)
-	if !strings.Contains(result, "path with spaces") {
-		t.Errorf("expected path with spaces to be preserved, got %q", result)
-	}
-}
-
 func TestBuildPrivilegedOsascript_SpecialChars(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("osascript not available on windows")

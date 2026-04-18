@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -832,6 +833,9 @@ steps:
 // --- Platform Support Integration Tests ---
 
 func TestIntegration_PlatformRunMap(t *testing.T) {
+	if runtime.GOOS != "darwin" {
+		t.Skip("assertions hardcode darwin-specific output")
+	}
 	var buf bytes.Buffer
 	result, err := steprunner.Run(context.Background(), testdataPath("valid_platform_run.yaml"),
 		steprunner.WithOutputStream(&buf),
@@ -857,6 +861,9 @@ func TestIntegration_PlatformRunMap(t *testing.T) {
 }
 
 func TestIntegration_PlatformFilter(t *testing.T) {
+	if runtime.GOOS != "darwin" {
+		t.Skip("assertions hardcode darwin-specific output")
+	}
 	var buf bytes.Buffer
 	result, err := steprunner.Run(context.Background(), testdataPath("valid_platform_filter.yaml"),
 		steprunner.WithOutputStream(&buf),
