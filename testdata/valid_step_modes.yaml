@@ -1,0 +1,22 @@
+version: "1"
+
+steps:
+  - id: build
+    name: "Build"
+    type: command
+    run: "echo build"
+
+  - id: run-server
+    name: "Start Server"
+    type: command
+    mode: background
+    run: "echo server"
+    depends_on: ["build"]
+
+  - id: dev-frontend
+    name: "Dev Frontend"
+    type: command
+    mode: terminal
+    run: "echo dev"
+    working_dir: "./frontend"
+    depends_on: ["run-server"]

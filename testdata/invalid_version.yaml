@@ -1,0 +1,7 @@
+version: "99"
+
+steps:
+  - id: x
+    name: "X"
+    type: command
+    run: "echo x"

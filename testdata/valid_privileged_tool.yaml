@@ -1,0 +1,32 @@
+version: "1"
+
+tools:
+  brew:
+    check: "brew --version"
+    privileged: true
+    install:
+      darwin: 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+  go:
+    check: "go version"
+    install:
+      darwin: "brew install go"
+      linux: "sudo apt-get install -y golang"
+
+steps:
+  - id: check-brew
+    name: "Check Homebrew"
+    type: tool_check
+    tool: brew
+    platforms: ["darwin"]
+
+  - id: check-go
+    name: "Check Go"
+    type: tool_check
+    tool: go
+    depends_on: ["check-brew"]
+
+  - id: build
+    name: "Build"
+    type: command
+    run: "echo build_complete"
+    depends_on: ["check-go"]

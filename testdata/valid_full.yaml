@@ -1,0 +1,60 @@
+version: "1"
+
+tools:
+  git:
+    check: "git --version"
+    install:
+      darwin: "brew install git"
+      linux: "sudo apt-get install -y git"
+      windows: "choco install git"
+  go:
+    check: "go version"
+    install:
+      darwin: "brew install go"
+      linux: "sudo apt-get install -y golang"
+      windows: "choco install golang"
+
+steps:
+  - id: verify-git
+    name: "Verify Git"
+    type: tool_check
+    tool: git
+
+  - id: verify-go
+    name: "Verify Go"
+    type: tool_check
+    tool: go
+
+  - id: setup
+    name: "Setup Environment"
+    type: command
+    run: "echo 'Setting up environment...'"
+    depends_on: ["verify-git", "verify-go"]
+
+  - id: build
+    name: "Build Project"
+    type: command
+    run: "echo 'Building project...'"
+    env:
+      CGO_ENABLED: "0"
+      GOOS: "darwin"
+    depends_on: ["setup"]
+
+  - id: test
+    name: "Run Tests"
+    type: command
+    run: "echo 'Running tests... all passed'"
+    depends_on: ["build"]
+
+  - id: lint
+    name: "Run Linter"
+    type: command
+    run: "echo 'Linting... no issues found'"
+    depends_on: ["build"]
+    continue_on_error: true
+
+  - id: report
+    name: "Generate Report"
+    type: command
+    run: "echo 'All steps completed successfully'"
+    depends_on: ["test", "lint"]

@@ -1,0 +1,31 @@
+package model
+
+import "errors"
+
+var (
+	ErrParseFailed        = errors.New("steprunner: failed to parse task file")
+	ErrInvalidVersion     = errors.New("steprunner: unsupported or missing version")
+	ErrMissingStepID      = errors.New("steprunner: step is missing required 'id' field")
+	ErrMissingStepName    = errors.New("steprunner: step is missing required 'name' field")
+	ErrMissingStepType    = errors.New("steprunner: step is missing required 'type' field")
+	ErrInvalidStepType    = errors.New("steprunner: invalid step type (must be 'command', 'tool_check', or 'write_env')")
+	ErrMissingRunField    = errors.New("steprunner: command step is missing required 'run' field")
+	ErrMissingToolField   = errors.New("steprunner: tool_check step is missing required 'tool' field")
+	ErrToolNotDefined     = errors.New("steprunner: tool referenced by step is not defined in tools map")
+	ErrDuplicateStepID    = errors.New("steprunner: duplicate step id")
+	ErrDependencyNotFound = errors.New("steprunner: depends_on references unknown step id")
+	ErrCyclicDependency   = errors.New("steprunner: cyclic dependency detected")
+	ErrStepFailed         = errors.New("steprunner: step failed")
+	ErrToolNotFound       = errors.New("steprunner: required tool not found")
+	ErrToolInstallFailed  = errors.New("steprunner: tool installation failed")
+	ErrNoSteps            = errors.New("steprunner: task file contains no steps")
+	ErrMissingRequiredEnv = errors.New("steprunner: required environment variable not set")
+	ErrInvalidEnvVarName  = errors.New("steprunner: invalid environment variable name")
+	ErrInvalidPlatform    = errors.New("steprunner: invalid platform name (must be darwin, linux, or windows)")
+	ErrNoPlatformCommand  = errors.New("steprunner: no run command for current platform")
+	ErrInvalidStepMode    = errors.New("steprunner: invalid step mode (must be 'foreground', 'background', or 'terminal')")
+	ErrModeOnNonCommand   = errors.New("steprunner: 'mode' field is only valid on command steps")
+	ErrInvalidPortName    = errors.New("steprunner: invalid port name")
+	ErrInvalidPortValue   = errors.New("steprunner: port preferred value must be between 1024 and 65535")
+	ErrPortEnvCollision   = errors.New("steprunner: port name collides with an env var name")
+)

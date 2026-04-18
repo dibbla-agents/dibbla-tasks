@@ -1,0 +1,23 @@
+version: "1"
+
+env:
+  DATABASE_URL:
+    description: "PostgreSQL connection string"
+    default: "postgres://localhost:5432/mydb"
+  API_KEY:
+    description: "Third-party API key"
+    required: true
+  LOG_LEVEL:
+    description: "Logging verbosity"
+    default: "info"
+
+steps:
+  - id: write-env
+    name: "Write .env File"
+    type: write_env
+
+  - id: check-env
+    name: "Verify Environment"
+    type: command
+    run: "echo DB=$DATABASE_URL LOG=$LOG_LEVEL"
+    depends_on: ["write-env"]

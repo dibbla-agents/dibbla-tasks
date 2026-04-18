@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }} / go ${{ matrix.go }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go: ["1.24"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test ./...
+
+  cross-compile:
+    name: cross-compile vet (linux + windows from ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Vet for linux/amd64
+        env:
+          GOOS: linux
+          GOARCH: amd64
+        run: go vet ./...
+
+      - name: Vet for windows/amd64
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: go vet ./...
+
+      - name: Vet for darwin/arm64
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+        run: go vet ./...

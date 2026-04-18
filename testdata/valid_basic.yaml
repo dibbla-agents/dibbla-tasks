@@ -1,0 +1,12 @@
+version: "1"
+
+steps:
+  - id: hello
+    name: "Say Hello"
+    type: command
+    run: "echo hello_world"
+
+  - id: goodbye
+    name: "Say Goodbye"
+    type: command
+    run: "echo goodbye_world"

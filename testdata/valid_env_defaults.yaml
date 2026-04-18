@@ -1,0 +1,23 @@
+version: "1"
+
+env:
+  APP_NAME:
+    description: "Application display name"
+    default: "MyApp"
+  APP_PORT:
+    description: "HTTP port for the application"
+    default: "8080"
+  LOG_LEVEL:
+    description: "Logging verbosity (debug, info, warn, error)"
+    default: "info"
+
+steps:
+  - id: write-env
+    name: "Write .env File"
+    type: write_env
+
+  - id: show-config
+    name: "Show Configuration"
+    type: command
+    run: "echo APP=$APP_NAME PORT=$APP_PORT LOG=$LOG_LEVEL"
+    depends_on: ["write-env"]

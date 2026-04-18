@@ -1,0 +1,16 @@
+version: "1"
+
+steps:
+  - id: install-deps
+    name: "Install Dependencies"
+    type: command
+    run:
+      darwin: "echo installed_on_darwin"
+      linux: "echo installed_on_linux"
+      windows: "echo installed_on_windows"
+
+  - id: build
+    name: "Build Project"
+    type: command
+    run: "echo build_complete"
+    depends_on: ["install-deps"]

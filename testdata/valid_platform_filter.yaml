@@ -1,0 +1,34 @@
+version: "1"
+
+steps:
+  - id: common-setup
+    name: "Common Setup"
+    type: command
+    run: "echo common_setup"
+
+  - id: mac-only
+    name: "macOS Only"
+    type: command
+    platforms: ["darwin"]
+    run: "echo mac_step"
+    depends_on: ["common-setup"]
+
+  - id: linux-only
+    name: "Linux Only"
+    type: command
+    platforms: ["linux"]
+    run: "echo linux_step"
+    depends_on: ["common-setup"]
+
+  - id: windows-only
+    name: "Windows Only"
+    type: command
+    platforms: ["windows"]
+    run: "echo windows_step"
+    depends_on: ["common-setup"]
+
+  - id: final
+    name: "Final Step"
+    type: command
+    run: "echo final_step"
+    depends_on: ["mac-only", "linux-only", "windows-only"]

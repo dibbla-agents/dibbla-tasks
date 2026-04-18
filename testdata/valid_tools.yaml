@@ -1,0 +1,24 @@
+version: "1"
+
+tools:
+  git:
+    check: "git --version"
+  go:
+    check: "go version"
+
+steps:
+  - id: check-git
+    name: "Check Git"
+    type: tool_check
+    tool: git
+
+  - id: check-go
+    name: "Check Go"
+    type: tool_check
+    tool: go
+
+  - id: show-versions
+    name: "Show Versions"
+    type: command
+    run: "echo 'All tools verified'"
+    depends_on: ["check-git", "check-go"]

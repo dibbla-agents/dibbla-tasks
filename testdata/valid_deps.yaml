@@ -1,0 +1,25 @@
+version: "1"
+
+steps:
+  - id: step-a
+    name: "Step A"
+    type: command
+    run: "echo step_a"
+
+  - id: step-b
+    name: "Step B"
+    type: command
+    run: "echo step_b"
+    depends_on: ["step-a"]
+
+  - id: step-c
+    name: "Step C"
+    type: command
+    run: "echo step_c"
+    depends_on: ["step-a"]
+
+  - id: step-d
+    name: "Step D (depends on B and C)"
+    type: command
+    run: "echo step_d"
+    depends_on: ["step-b", "step-c"]
