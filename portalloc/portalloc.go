@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net"
 	"sort"
+	"strconv"
+	"time"
 )
 
 // PortDef declares a named port with a preferred value and scan range.
@@ -77,9 +79,21 @@ func AllocateAll(defs map[string]PortDef) (map[string]int, error) {
 	return allocated, nil
 }
 
-// isPortFree attempts to bind the given TCP port. Returns true if the
-// port is available. Works cross-platform (macOS, Linux, Windows).
+// isPortFree reports whether the given TCP port is available for a dev
+// server. Binding the IPv4 wildcard alone is not enough: it succeeds while
+// another process listens only on IPv6 ([::1] or [::]) on every OS, and on
+// Windows it also succeeds while another process listens on 127.0.0.1. Dev
+// servers usually bind "localhost", which can be either. So the port counts
+// as busy if anything accepts a connection on a loopback address, or if the
+// IPv4 wildcard cannot be bound.
 func isPortFree(port int) bool {
+	for _, host := range []string{"127.0.0.1", "::1"} {
+		c, err := net.DialTimeout("tcp", net.JoinHostPort(host, strconv.Itoa(port)), dialTimeout)
+		if err == nil {
+			c.Close()
+			return false
+		}
+	}
 	ln, err := net.Listen("tcp4", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return false
@@ -87,6 +101,10 @@ func isPortFree(port int) bool {
 	ln.Close()
 	return true
 }
+
+// dialTimeout bounds each loopback probe. A closed port on loopback is
+// refused immediately; the timeout only matters if a firewall drops the SYN.
+const dialTimeout = 250 * time.Millisecond
 
 // osAssignedPort asks the OS to assign an ephemeral port.
 func osAssignedPort() (int, error) {

@@ -133,3 +133,33 @@ func TestAllocate_FallbackToOS(t *testing.T) {
 		t.Fatalf("expected port outside occupied range, got %d", got)
 	}
 }
+
+// DIB-1741: a listener only on IPv6 loopback (what Node's "localhost" often
+// binds) or only on 127.0.0.1 must make the port count as busy, even though
+// binding the IPv4 wildcard would succeed on some platforms.
+func TestIsPortFree_LoopbackOnlyListeners(t *testing.T) {
+	cases := []struct{ network, addr string }{
+		{"tcp4", "127.0.0.1:0"},
+		{"tcp6", "[::1]:0"},
+		{"tcp6", "[::]:0"},
+	}
+	for _, tc := range cases {
+		ln, err := net.Listen(tc.network, tc.addr)
+		if err != nil {
+			t.Logf("skip %s: %v", tc.addr, err)
+			continue
+		}
+		port := ln.Addr().(*net.TCPAddr).Port
+		if isPortFree(port) {
+			t.Errorf("isPortFree(%d) = true while %s listens on it", port, tc.addr)
+		}
+		got, err := Allocate(PortDef{Preferred: port, Range: 5}, nil)
+		if err != nil {
+			t.Fatalf("Allocate: %v", err)
+		}
+		if got == port {
+			t.Errorf("Allocate picked busy port %d (held on %s)", port, tc.addr)
+		}
+		ln.Close()
+	}
+}
